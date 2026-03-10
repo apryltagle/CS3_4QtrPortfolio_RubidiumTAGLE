@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="description" content="Movie Rating">
+  <meta name="author" content="Apryl Emmanoelle P. Tagle">
+  <title>Rate Movies</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+
+  <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        min-height: 100vh;
+    }
+
+    .container .rating { 
+        direction: rtl;
+    }
+
+    .container .rating label {
+        display: inline-block;
+        cursor: pointer;
+        color: #ebebeb;
+    }
+
+    .container .rating label i {
+        font-size: 1rem;
+        transition: 0.1s ease-in;
+    }
+
+    .container .rating label:hover i, .container .rating label:hover ~ label i {
+        color: rgb(255, 255, 78);
+
+    }
+
+    .container .rating .rating-radio {
+        display: none;
+    }
+
+    .container .rating input.rating-radio:checked ~ label i {
+        color: rgb(255, 255, 78);
+    }
+
+    form { 
+        max-width: 2000px;
+    }
+      fieldset { 
+        margin-bottom: 14px; 
+        padding: 50px; 
+    }
+      label { 
+        display: block; 
+        margin: 4px 0; 
+    }
+      input,select,textarea {
+        width: 160px;
+        height: 25px;
+        box-sizing: border-box;
+        padding: 6px;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        background: #3b82f6;
+        color: white;
+        font-size: 1rem;
+        font-weight: bold;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    h1, h2 {
+        text-align: center;
+        color: #1a1a2e;
+        margin-bottom: 24px;
+    }
+
+    .container {
+        border-radius: 18px;
+        padding: 32px 40px;
+        width: 100%;
+        max-width: 550px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+   label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 4px;
+        color: #1a1a2e;
+    }
+
+   .movie-card {
+        border: 1.5px solid #e4e5e8;
+        border-radius: 9px;
+        padding: 12px 16px;
+        margin-bottom: 10px;
+        background: #f8faff;
+    }
+
+    .movie-card strong { 
+        font-size: 1rem; 
+        color: #000000; 
+    }
+
+    .movie-card span { 
+        font-size: 0.75rem; 
+        color: #6580a7; 
+        }
+
+    .movie-card .stars {
+        color: rgb(233, 233, 48);
+    }   
+
+</style>
+</head>
+<body>
+
+    <div class="container">
+    <form id="movieRate">
+
+        <h1>Add a Movie</h1>
+
+            <label>Title: <input type="text" id="Title" required onblur="markIfBlank(this)"></label>
+            <label>Year: <input type="number" id="Year" required onblur="markIfBlank(this)"></label>
+            <label>Genre:
+            <select id="Genre" required>
+                <option value="" disabled selected>Select</option>
+                <option value="Action">Action</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Romance">Romance</option>
+                <option value="Thriller">Thriller</option>
+                <option value="Horror">Horror</option>
+            </select>
+        </label>
+                <div class="rating">
+                    <input type="radio" name="rating" id="star-1" class="rating-radio" value="1">
+                    <label for="star-1"><i class="fa-solid fa-star"></i></label>
+
+                    <input type="radio" name="rating" id="star-2" class="rating-radio" value="2">
+                    <label for="star-2"><i class="fa-solid fa-star"></i></label>
+
+                    <input type="radio" name="rating" id="star-3" class="rating-radio" value="3">
+                    <label for="star-3"><i class="fa-solid fa-star"></i></label>
+
+                    <input type="radio" name="rating" id="star-4" class="rating-radio" value="4">
+                    <label for="star-4"><i class="fa-solid fa-star"></i></label>
+
+                    <input type="radio" name="rating" id="star-5" class="rating-radio" value="5">
+                    <label for="star-5"><i class="fa-solid fa-star"></i></label>
+                </div>
+                <button onclick="addMovie()">Add Movie</button>
+        </form>
+
+        <h2>Movie List</h2>
+        <div id="movieList"></div>
+    </div>
+
+    <script>
+        function addMovie() {
+            var title = document.getElementById("Title").value;
+            var year = document.getElementById("Year").value;
+            var genre = document.getElementById("Genre").value;
+            var rating = document.querySelector("input[name='rating']:checked");
+
+
+            if(!title || !year || !genre){
+                alert("Please fill in all of the fields");
+                return;
+            }
+
+            var movies = JSON.parse(localStorage.getItem("movies") || "[]");
+
+            movies.push({title: title, year: year, genre: genre, rating: rating.value });
+
+            localStorage.setItem("movies", JSON.stringify(movies));
+
+            renderList();
+        }
+
+        function renderList() {
+            var movies = JSON.parse(localStorage.getItem("movies") || "[]");
+            var container = document.getElementById("movieList");
+            container.innerHTML = "";
+
+            for (var i = 0; i < movies.length; i++){
+                var x = movies[i];
+                var star = "";
+                for (var j = 1; j <= 5; j++){
+                    star += j <= x.rating ? "★" : "☆";
+                }
+                container.innerHTML += 
+                "<div class='movie-card'>" +
+                    "<strong>" + x.title + "</strong><br>" +
+                        "<span>" + x.year + " - " + x.genre + "</span><br>" +
+                            "<span class='stars'>" + star + "</span>" +
+                                "</div>";
+            }
+        }
+
+        renderList();
+
+    </script>
+    <!--How To Dev. (2023, October 2). How to create a simple star rating using HTML & CSS | Star Rating Widget [Video]. YouTube. https://www.youtube.com/watch?v=0q6neX8jd44-->
+</body>

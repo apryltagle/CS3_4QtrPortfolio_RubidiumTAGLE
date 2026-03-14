@@ -27,6 +27,7 @@
     }
 
     .container .rating { 
+        display: flex;
         direction: rtl;
     }
 
@@ -34,6 +35,7 @@
         display: inline-block;
         cursor: pointer;
         color: #ebebeb;
+        direction: ltr;
     }
 
     .container .rating label i {
@@ -172,6 +174,9 @@
     </div>
 
     <script>
+
+        var movies = JSON.parse(localStorage.getItem("movies") || "[]");
+
         function addMovie() {
             var title = document.getElementById("Title").value;
             var year = document.getElementById("Year").value;
@@ -184,32 +189,91 @@
                 return;
             }
 
-            var movies = JSON.parse(localStorage.getItem("movies") || "[]");
+            var nRating = parseInt(rating.value);
 
-            movies.push({title: title, year: year, genre: genre, rating: rating.value });
+            var same = -1;
+            
+            for (var i = 0; i < movies.length; i++){
+                if(movies[i].title.toLowerCase() === title.toLowerCase()){
+                    same = i;
+                    break;
+                }
+            }
+
+            if(same !== -1){
+                var old = parseFloat(movies[same].rating);
+                var ave = ((old + nRating) / 2).toFixed(1);
+
+                movies[same].year = year;
+                movies[same].genre = genre;
+                movies[same].rating = ave;
+
+            }
+
+            else{
+
+                movies.push({title: title, year: year, genre: genre, rating: nRating });
+
+            }
+
+            document.getElementById("Title").value = "";
+            document.getElementById("Year").value = "";
+            document.getElementById("Genre").value = "";
+            var check = document.querySelector("input[name='rating']:checked");
+
+            if(check) check.checked = false;
 
             localStorage.setItem("movies", JSON.stringify(movies));
 
             renderList();
         }
 
+        function deleteMovies(ind){
+            var confirmed = confirm("Are you sure you want to delete?");
+
+            if(confirmed){
+                movies.splice(ind, 1);
+                localStorage.setItem("movies", JSON.stringify(movies));
+                renderList();
+            }
+        }
+
         function renderList() {
-            var movies = JSON.parse(localStorage.getItem("movies") || "[]");
+            movies = JSON.parse(localStorage.getItem("movies") || "[]");
             var container = document.getElementById("movieList");
             container.innerHTML = "";
 
             for (var i = 0; i < movies.length; i++){
                 var x = movies[i];
                 var star = "";
+                var stars = parseFloat(x.rating);
                 for (var j = 1; j <= 5; j++){
-                    star += j <= x.rating ? "★" : "☆";
+                    star += j <= stars ? "★" : "☆";
                 }
-                container.innerHTML += 
-                "<div class='movie-card'>" +
+
+                var card = document.createElement("div");
+                card.className = "movie-card";
+                var info = document.createElement("div");
+                info.className = "movie-card-info";
+
+                info.innerHTML += 
                     "<strong>" + x.title + "</strong><br>" +
                         "<span>" + x.year + " - " + x.genre + "</span><br>" +
                             "<span class='stars'>" + star + "</span>" +
                                 "</div>";
+
+            var deleteBtn = document.createElement("button");
+            deleteBtn.className = "delete-btn";
+            deleteBtn.textContent = "Delete";
+            deleteBtn.onclick = (function(idx) { 
+                return function() {
+                    deleteMovies(idx);
+                };
+            })(i);
+
+            card.appendChild(info);
+            card.appendChild(deleteBtn);
+            container.appendChild(card);
             }
         }
 

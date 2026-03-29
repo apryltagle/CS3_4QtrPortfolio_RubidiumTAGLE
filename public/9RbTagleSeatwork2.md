@@ -98,11 +98,19 @@
     * What changes that you have to do on the code that will position .notice box on the top right corner of the .content box? Please write the code on paper as well (both html and css on the part of .notice and .content).
     
 
-    >
+    >To position the .notice box on the top right corner of the .content box, you first have to put or nest it .notice inside .content in the HTML part. Then, you have to change the position of .content to relative so it becomes the positioning parent. Furthermore, you can also make the values of top and right css of .notice to snap to the top-right corner of .content.
 
 
     * Try to change the position of .content to relative then to fixed. What do you observed each time?
+
+    >When the position is relative, the relative position is based on the top and left values. However, even if you scroll, the space is still reserved by the browser and it still flows with the rest of the elements. If it is fixed on the otherhand, it it somewhat locked on the screen. It says put like a floating browser no matter how far you scroll.
+
+
     * What do you observe on about the effect of z-index on .notice and .content boxes?
+
+    >As we have stated before, the z-index determines the stacking order of elements, or rather, how they appear on the browser. A higher z-index indicates that is is closest to the viewer. Since .notice has a z-index of 2 and .content has a z-index of 1, .notice is on top of .content whenever they overlap. This means that .notice is visible above .content.
+
+
 
 3. Please answer the following reflection questions (15 minutes)
 

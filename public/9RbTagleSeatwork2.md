@@ -112,9 +112,13 @@
 
     b. How does absolute positioning depend on its parent element?
 
-    >
+    >It is placed to its nearest ancestor element. 
     
 
     c. How do you differentiate sticky from fixed (you can research on sticky)?
 
+    >Sticky and fixed are very different from each other. Fixed, from its name, is stuck on the viewport while sticky is sticks to its threshold while an individual is scrolling.
+
     d. If you were designing a webpage for a school event, how might you use positioning to highlight important information? Please give concrete examples.
+
+    >I think using position sticky would be the best option as while an individual scrolls, something important---perhaps an event---would be displayed on the user's screen while they are reading the details of an event.
